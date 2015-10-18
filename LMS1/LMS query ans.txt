@@ -1,0 +1,155 @@
+Complex Queries:
+
+1.  select b.BOOK_CODE, b.BOOK_TITLE, s.SUPPLIER_NAME from lms_book_details b 
+
+join lms_suppliers_details s on(b.supplier_id = s.supplier_id) group by b.BOOK_CODE
+
+having s.SUPPLIER_NAME = (select max(supplier_name) from lms_suppliers_details);      //--------------------      wrong
+
+
+		OR
+
+
+SELECT b.BOOK_CODE, b.BOOK_TITLE, s.SUPPLIER_NAME
+FROM LMS_BOOK_DETAILS b, LMS_SUPPLIERS_DETAILS s
+WHERE b.SUPPLIER_ID=s.SUPPLIER_ID 
+	AND s.SUPPLIER_ID IN 	(SELECT SUPPLIER_ID 
+				FROM LMS_BOOK_DETAILS 
+				GROUP BY SUPPLIER_ID 
+				HAVING COUNT(*)=(SELECT MAX(C) 
+						FROM (SELECT COUNT(*) C 
+						FROM LMS_BOOK_DETAILS 
+						GROUP BY SUPPLIER_ID)max_supp
+				)
+);
+
+
+		OR
+
+select lb.book_code,lb.book_title,supplier_name from lms_book_details as lb
+                      join lms_suppliers_details as ls on ls.supplier_id=lb.supplier_id
+                      where lb.supplier_id in
+                                (select supplier_id from lms_book_details 
+                                      group by supplier_id having 
+                                      count(book_code)=(select count(book_code) as cnt from lms_book_details 
+                                      group by supplier_id 
+                                      order by cnt desc limit 1));
+                                      
+
+
+BL000001	Java How To Do Program	SINGAPORE SHOPPEE
+BL000003	Java How To Do Program	SINGAPORE SHOPPEE
+BL000004	Java: The Complete Reference SINGAPORE SHOPPEE
+BL000005	Java How To Do Program	SINGAPORE SHOPPEE
+
+
+2.select * from lms_members;
+
+select m.member_id, m.member_name , (3-count(i.member_id)) RemainingBooks from lms_members m
+
+left outer join lms_book_issue i on(m.member_id = i.member_id) group by m.MEMBER_ID;
+
+
+			OR
+
+
+SELECT m.MEMBER_ID, m.MEMBER_NAME, 3-count(i.member_id) as 'REMAININGBOOKS'
+FROM LMS_BOOK_ISSUE i RIGHT OUTER JOIN LMS_MEMBERS m
+ON m.MEMBER_ID=i.MEMBER_ID
+GROUP BY m.MEMBER_ID;
+
+LM001	AMIT	2
+LM0011	AMIT	3
+LM002	ABDHUL	2
+LM003	GAYAN	1
+LM004	RADHA	2
+LM005	GURU	1
+LM006	MOHAN	3
+
+
+
+
+
+3.SELECT s.SUPPLIER_ID, s.SUPPLIER_NAME
+FROM LMS_SUPPLIERS_DETAILS s, LMS_BOOK_DETAILS b
+WHERE s.SUPPLIER_ID=b.SUPPLIER_ID 
+	AND s.SUPPLIER_ID IN 	(SELECT SUPPLIER_ID 
+				FROM LMS_BOOK_DETAILS 
+				GROUP BY SUPPLIER_ID 
+				HAVING COUNT(*)=	(SELECT MIN(C) 
+							FROM 	(SELECT COUNT(*) C 
+								FROM LMS_BOOK_DETAILS 
+								GROUP BY SUPPLIER_ID
+								)a
+							)
+				);
+
+
+		OR
+
+
+select s.SUPPLIER_ID, s.SUPPLIER_NAME from lms_suppliers_details s
+join lms_book_details b on(s.supplier_id = b.supplier_id)
+where s.SUPPLIER_NAME = (select min(s.SUPPLIER_NAME) from lms_suppliers_details s
+join lms_book_details b on(s.supplier_id = b.supplier_id));
+
+
+S04	KAVARI STORE
+
+
+
+
+Average
+
+
+8.SELECT DATE_ISSUE, count(*) 'NOOFBOOKS' FROM LMS_BOOK_ISSUE 
+group by date_issue 
+having count(*)=(SELECT MAX(C) FROM(SELECT COUNT(*) C FROM LMS_BOOK_ISSUE GROUP BY DATE_ISSUE)a);
+
+2012-04-01	2
+2012-05-01	2
+
+
+
+4..LMS_Santhosh
+
+
+Write a query to display the book code, book title and availability status of the ‘JAVA’ books whose edition is "6”. Show the availability status with alias name “AVAILABILITYSTATUS”. Hint: Book availability status can be fetched from “BOOK_ISSUE_STATUS” column of LMS_BOOK_ISSUE table.
+
+
+select lb.book_code,book_title,date_returned, if(lb.book_code not in(select book_code from lms_book_issue) or date_returned is not null,'Available', 'Not Available') from lms_book_details lb left outer  join
+lms_book_issue ls on lb.book_code=ls.book_code
+where book_edition=6 and category='Java'
+
+
+
+BL000001	Java How To Do Program	2012-05-16	Available
+BL000003	Java How To Do Program	 NULL	                 Available
+BL000005	Java How To Do Program	2012-04-20	Available
+
+
+
+Problem # 15:
+
+Write a query to display book code, book name, and publisher, how old the book is. Sorted as older to newer.
+
+
+
+select book_code, book_title, publication, 
+(datediff(now(),publish_date)/365)'years older' from lms_book_details order by  datediff(now(),publish_date) desc;
+
+				OR
+use lms_db;
+select book_code, book_title, publication, 
+(datediff(current_date,publish_date)/365) 'years older' from lms_book_details order by 'years older' desc;
+
+
+
+BL000003	Java How To Do Program	                 Prentice Hall	15.8603
+BL000001	Java How To Do Program	                 Prentice Hall	15.2740
+BL000005	Java How To Do Program	                 Prentice Hall	15.2740
+BL000008	Let Us C	                                                 BPB Publications	4.8466
+BL000007	Let Us C	                                                 BPB Publications	4.2630
+BL000002	Java: The Complete Reference 	Tata Mcgraw Hill 	3.4329
+BL000004	Java: The Complete Reference 	Tata Mcgraw Hill 	3.4329
+BL000006	Java: The Complete Reference 	Tata Mcgraw Hill 	3.4329

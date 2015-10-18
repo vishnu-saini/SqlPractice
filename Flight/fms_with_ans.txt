@@ -1,0 +1,102 @@
+1)select passname from passenger
+WHERE passname LIKE '_i%';
+
+2)select passname from passenger
+WHERE passdob=(select max(passdob) from passenger);
+
+3)select passname,passdob,round(DATEDIFF(current_date,passdob)/365) age
+from passenger;
+
+4)select count(flightsource) FROM_KOL
+from flight
+where flightsource='kol';
+
+5)select flightsource from flight f1
+group by flightsource
+having count(flightsource)=(select count(flightdest)
+                 from flight f2 where
+                 f1.flightsource=f2.flightdest);
+
+6)select flightsource from flight
+WHERE flightsource NOT IN (select flightdest from flight);
+
+7)select flightdate from flight
+where flightid IN (1,4);
+
+8)select count(passid)
+from booking_details bd JOIN booking b
+ON bd.bookingid=b.bookingid
+GROUP BY flightid;
+
+9)select passname,passdob
+from passenger
+WHERE datediff(current_date,passdob)/365 >= 60;
+
+10)select bookingid
+from booking_details
+GROUP BY bookingid
+HAVING count(passid) >=ALL (select count(passid) from booking_details
+                                 GROUP BY bookingid);
+
+11)select b.bookingid,sum(ticketcost) TOtal_Fare
+from booking b JOIN booking_details bd
+ON b.bookingid=bd.bookingid
+JOIN flight f
+ON b.flightid=f.flightid
+GROUP BY b.bookingid;
+
+12)select b.bookingid,sum(
+case
+when datediff(current_date,passdob)/365 <60 then ticketcost
+else ticketcost*0.5
+end) Total_cost
+from booking b JOIN booking_details bd
+ON b.bookingid=bd.bookingid
+JOIN flight f
+ON b.flightid=f.flightid
+JOIN passenger p
+ON p.passid=bd.passid
+GROUP BY b.bookingid;
+
+13)select flightdest from flight
+GROUP BY flightdest
+HAVING count(flightdest)>=ALL(select count(flightdest)
+                         from flight
+                         GROUP BY flightdest);
+
+14)select passname
+from passenger p JOIN booking_details bd
+ON p.passid=bd.passid
+GROUP BY passname
+HAVING count(bd.passid) > 1;
+
+15)select flightid ,count(passid)
+from booking b JOIN booking_details bd
+ON b.bookingid=bd.bookingid
+GROUP BY flightid;
+
+16)select passname
+from passenger p JOIN booking_details bd
+ON p.passid=bd.passid
+JOIN booking b
+ON b.bookingid=bd.bookingid
+JOIN flight f
+ON f.flightid=b.flightid
+WHERE b.bookdate=f.flightdate
+AND b.flightid=1;
+
+17)select f1.flightid
+from flight f1 JOIN flight f2
+ON f1.flightid != f2.flightid
+WHERE
+f1.flightsource=f2.flightsource
+AND
+f1.flightdest=f2.flightdest;
+
+
+
+20)select passname
+from passenger
+ORDER BY extract(month from passdob);
+
+

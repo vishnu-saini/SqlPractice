@@ -1,0 +1,159 @@
+
+SIMPLE QUESTIONS ANSWERS:
+
+1)select MEMBER_ID,MEMBER_NAME,MEMBERSHIP_STATUS from 
+lms_members where MEMBERSHIP_STATUS='permanent';
+
+
+2)select i.book_code, d.publication, d.price, s.supplier_name from lms_book_issue i 
+
+join lms_book_details d on(i.book_code=d.book_code) join lms_suppliers_details s on(s.supplier_id=d.supplier_id)
+
+group by i.book_code having count(i.book_code) = (select max(cnt) from ( select count(book_code) cnt 
+from lms_book_issue group by book_code)t1);
+
+3)select m.MEMBER_ID,m.MEMBER_NAME from lms_book_issue i join lms_members m  on(i.member_id=m.member_id) 
+where i.book_code='BL000002';
+
+4)select BOOK_CODE,BOOK_TITLE,AUTHOR from lms_book_details where author like 'P%';
+
+5)select count(*) No_of_Books from lms_book_details where category='JAVA';
+
+6)select CATEGORY, count(category) No_of_Books from lms_book_details group by category;
+
+
+7)select count(category) No_of_Books from lms_book_details where PUBLICATION='Prentice Hall';;
+
+
+8)select b.BOOK_CODE,b.BOOK_TITLE,i.DATE_ISSUE from lms_book_details b, lms_book_issue i 
+where b.BOOK_CODE=i.BOOK_CODE and DATE_ISSUE = '2012-04-01';
+
+
+9)select MEMBER_ID,MEMBER_NAME,DATE_REGISTER,DATE_EXPIRE from lms_members where DATE_EXPIRE < '2013-04-30';
+
+
+10)select MEMBER_ID,MEMBER_NAME,DATE_REGISTER,MEMBERSHIP_STATUS from lms_members where DATE_REGISTER < '2012-03-01' 
+&& MEMBERSHIP_STATUS='temporary';
+
+
+11)select MEMBER_ID,MEMBER_NAME,CITY from lms_members where CITY = 'delhi' || CITY = 'chennai';
+
+
+12)select concat(BOOK_TITLE ,' is written by ',AUTHOR ) BOOK_WRITTEN_BY from lms_book_details;
+
+13)select avg(price) AVERAGEPRICE from lms_book_details where CATEGORY = 'JAVA';
+
+14)select SUPPLIER_ID, SUPPLIER_NAME, EMAIL from lms_suppliers_details where EMAIL like '%gmail%';
+
+15)select SUPPLIER_ID, SUPPLIER_NAME, COALESCE( contact, email, ADDRESS) a from lms_suppliers_details;
+
+
+16)select SUPPLIER_ID,SUPPLIER_NAME,contact,if(contact,'yes','no') PHONENOAVAILABLE
+from lms_suppliers_details;
+
+17)select m.MEMBER_ID, m.MEMBER_NAME, m.CITY, m.MEMBERSHIP_STATUS from lms_members m 
+
+join lms_book_issue b on(m.member_id = b.member_id) 
+
+join lms_fine_details f on(b.fine_range = f.fine_range);
+
+
+
+AVERAGE QUESTIONS ANSWERS:
+
+1)select m.member_id,m.member_name,b.book_code,d.book_title from lms_members m
+
+join lms_book_issue b on(m.member_id = b.member_id)
+
+join lms_book_details d on(b.book_code = d.book_code);
+
+
+2)select count( book_code) No_of_books_available from lms_book_details
+
+where book_code not in( select book_code from lms_book_issue);
+
+3)select m.member_id, m.member_name, f.fine_range, f.fine_amount from lms_members m
+
+join lms_book_issue b on(m.member_id = b.member_id)
+
+join lms_fine_details f on(f.fine_range = b.fine_range) where f.fine_amount < 100;
+
+4)select BOOK_CODE, BOOK_TITLE, PUBLICATION, BOOK_EDITION, PRICE, PUBLISH_DATE from lms_book_details
+
+order by PUBLICATION, BOOK_EDITION;
+
+5)select BOOK_CODE, BOOK_TITLE, RACK_NUM from lms_book_details where RACK_NUM = 'A1' 
+group by BOOK_TITLE;
+
+6)select m.member_id, m.member_name, b.DATE_RETURN, b.date_returned from lms_members m
+
+join lms_book_issue b on( m.member_id = b.member_id)
+where DATE_RETURNED > DATE_RETURN;
+
+7)select MEMBER_ID, MEMBER_NAME, DATE_REGISTER from lms_members 
+where MEMBER_ID not in(select member_id from lms_book_issue);
+
+
+8)select m.member_id, m.member_name from lms_members m
+
+join lms_book_issue b on(m.member_id = b.member_id) 
+where b.FINE_RANGE = 'R0';
+
+9)select m.member_id, m.member_name from lms_members m
+
+join lms_book_issue b on(m.member_id = b.member_id)
+
+where b.FINE_RANGE = 'R0' && year (b.date_return) = '2012';
+
+10)select b.BOOK_TITLE, s.SUPPLIER_ID from lms_suppliers_details s 
+
+join lms_book_details b on(s.supplier_id = b.supplier_id)
+
+where b.author = 'Herbert Schildt' && b.book_edition = 5 && b.supplier_id = 'S01';
+
+11)select RACK_NUM, count(*) NO_OF_BOOKS from lms_book_details group by RACK_NUM;
+
+12)
+select i.BOOK_ISSUE_NO, m.MEMBER_NAME, m.DATE_REGISTER, m.DATE_EXPIRE, b.BOOK_TITLE, b.category,
+b.AUTHOR,
+ b.PRICE, i.DATE_ISSUE, i.DATE_RETURN, i.DATE_RETURNED, f.FINE_AMOUNT
+from lms_members m
+
+join lms_book_issue i on(m.member_id = i.member_id)
+
+join lms_book_details b on(i.book_code = b.book_code)
+
+join lms_fine_details f on(i.fine_range = f.fine_range);
+
+13)select BOOK_CODE, BOOK_TITLE, PUBLISH_DATE from lms_book_details where month(publish_date) = '12';
+
+14)select b.BOOK_CODE, b.BOOK_TITLE, s.SUPPLIER_NAME, max(b.PRICE) PRICE from lms_book_details b
+
+join lms_suppliers_details s on(b.supplier_id = s.supplier_id) group by s.supplier_name;
+
+15)select BOOK_CODE, BOOK_TITLE, PUBLICATION, PUBLISH_DATE from lms_book_details group by PUBLISH_DATE;
+
+
+COMPLEX QUESTIONS ANSWER:
+
+1)select b.BOOK_CODE, b.BOOK_TITLE, s.SUPPLIER_NAME from lms_book_details b 
+
+join lms_suppliers_details s on(b.supplier_id = s.supplier_id) group by b.BOOK_TITLE
+
+having s.SUPPLIER_NAME = (select max(supplier_name) from lms_suppliers_details);
+
+2)select m.member_id, m.member_name , (3-count(i.member_id)) RemainingBooks from lms_members m
+
+join lms_book_issue i on(m.member_id = i.member_id) group by i.MEMBER_ID;
+
+3)
+select s.SUPPLIER_ID, s.SUPPLIER_NAME from lms_suppliers_details s
+
+join lms_book_details b on(s.supplier_id = b.supplier_id)
+
+where s.SUPPLIER_NAME = (select min(s.SUPPLIER_NAME) from lms_suppliers_details s
+
+join lms_book_details b on(s.supplier_id = b.supplier_id));
+
+
+

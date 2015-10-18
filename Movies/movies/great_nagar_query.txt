@@ -1,0 +1,15 @@
+select a.customer_id,a.customer_name,a.contact_no,a.contact_address from customer_issue_details b 
+inner join 
+customer_master a
+on
+a.customer_id=b.customer_id 
+inner join
+customer_card_details c
+on
+a.customer_id not in (select customer_id from customer_card_details)
+where
+a.contact_address like ('%Nagar') 
+group by 
+a.customer_name
+order by
+a.customer_name asc ;

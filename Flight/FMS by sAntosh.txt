@@ -1,0 +1,1261 @@
+-----------------------------------------------------------------------------------------
+1. Display passenger name who has a 'i' as second letter in their name
+
+SELECT passname
+FROM passenger
+WHERE passname like '_i%';
+
+
+
+
++----------+
+| passname |
++----------+
+| hira     |
+| sita     |
+| mica     |
++----------+
+3 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+2. Display the name of the youngest passenger.
+
+SELECT passname
+FROM passenger
+WHERE passdob = (SELECT max(passdob) FROM passenger);
+
++----------+
+| passname |
++----------+
+| sita     |
++----------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+3. Display the name of the passenger, date of birth and age.
+
+
+SELECT passname, passdob, floor(year(curdate())-year(passdob)) AGE
+FROM passenger;
+
+
+
+
++-----------+------------+------+
+| passname  | passdob    | age  |
++-----------+------------+------+
+| Rajesh    | 1980-12-01 |   34 |
+| hira      | 1939-11-11 |   75 |
+| sita      | 1988-02-06 |   26 |
+| mica      | 1973-09-18 |   41 |
+| elizabeth | 1976-05-09 |   38 |
+| kaushik   | 1955-08-08 |   59 |
++-----------+------------+------+
+6 rows in set (0.02 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+4. Display the number of flights leaving Kolkata.
+
+
+SELECT * FROM flight where flightsource='kol';
++----------+--------------+------------+------------+------------+------------+
+| flightid | flightsource | flightdest | flightdate | flightseat | ticketcost |
++----------+--------------+------------+------------+------------+------------+
+|        1 | kol          | hyd        | 2012-12-01 |        100 |       2000 |
+|        8 | kol          | hyd        | 2012-12-06 |        100 |       3500 |
++----------+--------------+------------+------------+------------+------------+
+2 rows in set (0.00 sec)
+
+
+SELECT count(*) FROM flight where flightsource='kol';
+
++----------+
+| count(*) |
++----------+
+|        2 |
++----------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+5. Display the name of city where the number of flights leaving and reaching is the same.
+
+
+
+
+SELECT flightsource, count(flightsource)
+FROM flight 
+GROUP BY flightsource;
+
++--------------+---------------------+
+| flightsource | count(flightsource) |
++--------------+---------------------+
+| bangalore    |                   1 |
+| chen         |                   1 |
+| hyd          |                   1 |
+| kol          |                   2 |
+| pune         |                   3 |
++--------------+---------------------+
+5 rows in set (0.00 sec)
+
+
+
+
+
+SELECT flightdest, count(flightdest)
+FROM flight 
+GROUP BY flightdest;
+
++------------+-------------------+
+| flightdest | count(flightdest) |
++------------+-------------------+
+| bangalore  |                 1 |
+| hyd        |                 4 |
+| kol        |                 2 |
+| pune       |                 1 |
++------------+-------------------+
+4 rows in set (0.00 sec)
+
+
+SELECT flightsource, count(flightsource)
+FROM flight
+GROUP BY flightsource
+HAVING count(flightsource) IN (SELECT count(flightdest)
+				FROM flight
+				GROUP BY flightdest);
+
+
+
+
+SELECT s.flightsource as CITY
+FROM 
+(SELECT flightid, flightsource, count(*) sc FROM flight GROUP BY flightsource)s,
+(SELECT flightid, flightdest, count(*) dc FROM flight GROUP BY flightdest)d
+WHERE s.sc=d.dc AND s.flightsource=d.flightdest;
+
+
++-----------+
+| CITY      |
++-----------+
+| bangalore |
+| kol       |
++-----------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+6. Display the name of the city which has flight source but no destination.
+
+
+
+SELECT flightsource
+FROM flight
+WHERE flightsource NOT IN (SELECT flightdest FROM flight);
+
+
+
++--------------+
+| flightsource |
++--------------+
+| chen         |
++--------------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+7. Display the dates on which flight 1 and 4 is flying.
+
+
+
+SELECT flightid, flightdate
+FROM flight
+WHERe flightid IN (1,4);
+
+
+
++----------+------------+
+| flightid | flightdate |
++----------+------------+
+|        1 | 2012-12-01 |
+|        4 | 2012-12-03 |
++----------+------------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+8. Display the number of passenger in each flight. Use column alias “PassCount”.
+
+
+
+SELECT b.flightid, count(bd.passid) as PassCount
+FROM booking_details bd, booking b
+WHERE b.bookingid=bd.bookingid
+GROUP BY flightid;
+
+
+
+
++----------+-----------+
+| flightid | PassCount |
++----------+-----------+
+|        1 |         3 |
+|        3 |         1 |
+|        4 |         5 |
+|        5 |         1 |
++----------+-----------+
+4 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+9. Display the name and date of birth of passengers who are senior citizen (age>=60).
+
+
+
+SELECT passname, passdob
+FROM passenger
+WHERE floor(year(curdate())-year(passdob))>=60;
+
+
+
+
++----------+------------+
+| passname | passdob    |
++----------+------------+
+| hira     | 1939-11-11 |
++----------+------------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+10. Display the booking id having the highest number of passengers.
+
+
+
+SELECT bookingid, count(passid)
+FROM booking_details
+GROUP BY bookingid;
+
++-----------+---------------+
+| bookingid | count(passid) |
++-----------+---------------+
+|         1 |             3 |
+|         2 |             1 |
+|         3 |             2 |
+|         4 |             1 |
+|         5 |             3 |
++-----------+---------------+
+5 rows in set (0.00 sec)
+
+
+
+SELECT bookingid, MAX[count(passid)]
+FROM booking_details
+GROUP BY bookingid;
+
+
+
+SELECT bookingid, max(c)
+FROM (SELECT bookingid, count(passid) c 
+	FROM booking_details
+	GROUP BY bookingid)a;
+
++-----------+--------+
+| bookingid | max(c) |
++-----------+--------+
+|         1 |      3 |
++-----------+--------+
+1 row in set (0.00 sec)
+
+^^^^ THIS 1 is WRONG... coz there are 2 max in the output...
+
+******************************
+
+
+SELECT bookingid, count(passid)
+FROM booking_details
+WHERE bookingid in (SELECT bookingid
+			FROM booking_details
+			GROUP by bookingid
+			HAVING count(passid) = (SELECT max(c) 
+						FROM (SELECT count(passid) c 
+							FROM booking_details 
+							GROUP BY bookingid )a
+						)
+			)
+GROUP BY bookingid;
+
+
++-----------+---------------+
+| bookingid | count(passid) |
++-----------+---------------+
+|         1 |             3 |
+|         5 |             3 |
++-----------+---------------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+11. Display the booking id (ticket) and the total cost for the booking. Use column alias “Total Fare”.
+
+
+SELECT b.bookingid as Ticket, sum(f.ticketcost) as "Total Fare"
+FROM flight f, booking b, booking_details bd
+WHERE f.flightid=b.flightid AND b.bookingid=bd.bookingid
+GROUP BY ticket;
+
+
++--------+------------+
+| Ticket | Total Fare |
++--------+------------+
+|      1 |       6000 |
+|      2 |       2500 |
+|      3 |       4600 |
+|      4 |       2600 |
+|      5 |       6900 |
++--------+------------+
+5 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+12. Display the booking id (ticket) and the total cost for the booking. Use column alias “Total Fare”. Consider giving a rebate of 50% to senior citizen (age>=60).
+
+
+SELECT p.passid, b.bookingid, f.ticketcost
+FROM flight f, booking b, passenger p, booking_details bd
+WHERE f.flightid=b.flightid AND p.passid=bd.passid AND b.bookingid=bd.bookingid;
+
++--------+-----------+------------+
+| passid | bookingid | ticketcost |
++--------+-----------+------------+
+|      1 |         1 |       2000 |
+|      1 |         4 |       2600 |
+|      2 |         1 |       2000 |
+|      2 |         5 |       2300 |
+|      3 |         1 |       2000 |
+|      3 |         5 |       2300 |
+|      4 |         2 |       2500 |
+|      4 |         5 |       2300 |
+|      5 |         3 |       2300 |
+|      6 |         3 |       2300 |
++--------+-----------+------------+
+10 rows in set (0.00 sec)
+
+
+
+
+SELECT p.passid, b.bookingid, sum(f.ticketcost) 'TotalFare'
+FROM flight f, booking b, passenger p, booking_details bd
+WHERE f.flightid=b.flightid AND p.passid=bd.passid AND b.bookingid=bd.bookingid
+GROUP BY p.passid;
+
++--------+-----------+-----------+
+| passid | bookingid | TotalFare |
++--------+-----------+-----------+
+|      1 |         1 |      4600 |
+|      2 |         1 |      4300 |
+|      3 |         1 |      4300 |
+|      4 |         2 |      4800 |
+|      5 |         3 |      2300 |
+|      6 |         3 |      2300 |
++--------+-----------+-----------+
+6 rows in set (0.00 sec)
+
+
+
+SELECT p.passid, b.bookingid, 
+	if( (floor(year(curdate())-year(p.passdob))>=60) ,(sum(f.ticketcost)-(0.5*(sum(f.ticketcost)))) ,sum(f.ticketcost)) 'TotalFare'
+	FROM flight f, booking b, passenger p, booking_details bd
+	WHERE f.flightid=b.flightid AND p.passid=bd.passid AND b.bookingid=bd.bookingid
+	GROUP BY p.passid;
+
++--------+-----------+-----------+
+| passid | bookingid | TotalFare |
++--------+-----------+-----------+
+|      1 |         1 |      4600 |
+|      2 |         1 |      2150 |
+|      3 |         1 |      4300 |
+|      4 |         2 |      4800 |
+|      5 |         3 |      2300 |
+|      6 |         3 |      2300 |
++--------+-----------+-----------+
+6 rows in set (0.00 sec)
+
+
+
+
+LOGIC: if(age>=60, sum-0.5*sum, sum)
+
+
+
+
+----------------------------------------------------------------------------------------------
+SELECT b.bookingid as bid, p.passid, 
+	if( (floor(year(curdate())-year(p.passdob))>=60) ,(sum(f.ticketcost)-(0.5*(sum(f.ticketcost)))) ,sum(f.ticketcost)) 'TotalFare'
+	FROM flight f, booking b, passenger p, booking_details bd
+	WHERE f.flightid=b.flightid AND p.passid=bd.passid AND b.bookingid=bd.bookingid
+	GROUP BY b.bookingid, p.passid;
+
++-----+--------+-----------+
+| bid | passid | TotalFare |
++-----+--------+-----------+
+|   1 |      1 |      2000 |
+|   1 |      2 |      1000 |
+|   1 |      3 |      2000 |
+|   2 |      4 |      2500 |
+|   3 |      5 |      2300 |
+|   3 |      6 |      2300 |
+|   4 |      1 |      2600 |
+|   5 |      2 |      1150 |
+|   5 |      3 |      2300 |
+|   5 |      4 |      2300 |
++-----+--------+-----------+
+10 rows in set (0.04 sec)
+
+
+
+
+
+---------------------------FINAL--------------------------------
+
+SELECT bid, sum(TotalFare)
+FROM 
+(SELECT b.bookingid as bid, p.passid, 
+	if( (floor(year(curdate())-year(p.passdob))>=60) ,(sum(f.ticketcost)-(0.5*(sum(f.ticketcost)))) ,sum(f.ticketcost)) 'TotalFare'
+	FROM flight f, booking b, passenger p, booking_details bd
+	WHERE f.flightid=b.flightid AND p.passid=bd.passid AND b.bookingid=bd.bookingid
+	GROUP BY b.bookingid, p.passid)a
+GROUP BY bid;
+
+
+----------------OR-----------------
+
+
+SELECT bid, sum(TotalFare)
+FROM (SELECT b.bookingid as bid, p.passid, 
+	if( ((datediff(now(), p.passdob)/365)>=60) ,(sum(f.ticketcost)-(0.5*(sum(f.ticketcost)))) ,sum(f.ticketcost)) 'TotalFare'
+	FROM flight f, booking b, passenger p, booking_details bd
+	WHERE f.flightid=b.flightid AND p.passid=bd.passid AND b.bookingid=bd.bookingid
+	GROUP BY b.bookingid, p.passid)a
+GROUP BY bid;
+
+
+
+
++-----+----------------+
+| bid | sum(TotalFare) |
++-----+----------------+
+|   1 |           5000 |
+|   2 |           2500 |
+|   3 |           4600 |
+|   4 |           2600 |
+|   5 |           5750 |
++-----+----------------+
+5 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------
+13. Display the city receiving the maximum number of flights.
+
+
+SELECT flightid, flightdest, count(flightdest)
+FROM flight
+GROUP BY flightdest;
+
++----------+------------+-------------------+
+| flightid | flightdest | count(flightdest) |
++----------+------------+-------------------+
+|        5 | bangalore  |                 1 |
+|        1 | hyd        |                 4 |
+|        3 | kol        |                 2 |
+|        4 | pune       |                 1 |
++----------+------------+-------------------+
+4 rows in set (0.00 sec)
+
+
+from this we know that output shud b 'hyd'
+
+
+SELECT flightdest
+FROM flight
+WHERE flightid IN (SELECT flightid
+			FROM flight
+			GROUP BY flightdest		
+		);
+
++------------+
+| flightdest |
++------------+
+| hyd        |
+| kol        |
+| pune       |
+| bangalore  |
++------------+
+4 rows in set (0.00 sec)
+
+
+
+SELECT flightdest
+FROM flight
+WHERE flightid IN (SELECT flightid
+			FROM flight
+			GROUP BY flightdest
+			HAVING count(flightdest) IN (SELECT max(c) 
+							FROM (SELECT count(flightdest) c
+								FROM flight
+								GROUP BY flightdest)a
+							)
+		);
+
+
++------------+
+| flightdest |
++------------+
+| hyd        |
++------------+
+1 row in set (0.00 sec)
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+14. Display the passenger’s name having more than 1 booking.
+
+
+
+SELECT passid, count(bookingid)
+FROM booking_details
+GROUP by passid
+HAVING count(bookingid)>1;
+
+
++--------+------------------+
+| passid | count(bookingid) |
++--------+------------------+
+|      1 |                2 |
+|      2 |                2 |
+|      3 |                2 |
+|      4 |                2 |
++--------+------------------+
+4 rows in set (0.00 sec)
+
+
+..now just print passname only as asked in the query...
+
+SELECT passname
+FROM passenger
+WHERE passid in (SELECT passid
+		FROM booking_details
+		GROUP by passid
+		HAVING count(bookingid)>1);
+
+
+
++----------+
+| passname |
++----------+
+| Rajesh   |
+| hira     |
+| sita     |
+| mica     |
++----------+
+4 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+15. Display flightid with no of booking.
+
+SELECT flightid, bookingid
+FROM booking;
+
+
++----------+-----------+
+| flightid | bookingid |
++----------+-----------+
+|        1 |         1 |
+|        1 |         6 |
+|        3 |         2 |
+|        3 |         7 |
+|        4 |         3 |
+|        4 |         5 |
+|        5 |         4 |
++----------+-----------+
+7 rows in set (0.00 sec)
+
+
+...now count booking per flight..
+
+
+SELECT flightid, count(bookingid)
+FROM booking
+GROUP BY flightid;
+
++----------+------------------+
+| flightid | count(bookingid) |
++----------+------------------+
+|        1 |                2 |
+|        3 |                2 |
+|        4 |                2 |
+|        5 |                1 |
++----------+------------------+
+4 rows in set (0.00 sec)
+
+
+
+OR >>>>>>>>>>>>>>>>>>>
+
+
+SELECT f.flightid, count(b.bookingid)
+FROM booking b RIGHT OUTER JOIN flight f
+ON b.flightid=f.flightid
+GROUP BY f.flightid;
+
+
++----------+--------------------+
+| flightid | count(b.bookingid) |
++----------+--------------------+
+|        1 |                  2 |
+|        2 |                  0 |
+|        3 |                  2 |
+|        4 |                  2 |
+|        5 |                  1 |
+|        6 |                  0 |
+|        7 |                  0 |
+|        8 |                  0 |
++----------+--------------------+
+8 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+16. Display the passenger (name only) who booked ticket on the day of flight for flight no 1.
+
+
+select bd.passid, b.bookdate
+FROM booking b, booking_details bd, flight f
+WHERE b.bookingid=bd.bookingid 
+	AND f.flightid=b.flightid 
+	AND f.flightid=1 
+	AND f.flightdate=b.bookdate;
+
+
++--------+------------+
+| passid | bookdate   |
++--------+------------+
+|      1 | 2012-12-01 |
+|      2 | 2012-12-01 |
+|      3 | 2012-12-01 |
++--------+------------+
+3 rows in set (0.00 sec)
+
+
+
+
+select p.passname, b.bookdate
+FROM booking b, booking_details bd, flight f, passenger p
+WHERE b.bookingid=bd.bookingid 
+	AND f.flightid=b.flightid 
+	AND p.passid=bd.passid
+	AND f.flightid=1 
+	AND f.flightdate=b.bookdate;
+
+
++----------+------------+
+| passname | bookdate   |
++----------+------------+
+| Rajesh   | 2012-12-01 |
+| hira     | 2012-12-01 |
+| sita     | 2012-12-01 |
++----------+------------+
+3 rows in set (0.00 sec)
+
+
+
+
+FINAL>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+select p.passname
+FROM booking b, booking_details bd, flight f, passenger p
+WHERE b.bookingid=bd.bookingid 
+	AND f.flightid=b.flightid 
+	AND p.passid=bd.passid
+	AND f.flightid=1 
+	AND f.flightdate=b.bookdate;
+
+
++----------+
+| passname |
++----------+
+| Rajesh   |
+| hira     |
+| sita     |
++----------+
+3 rows in set (0.00 sec)
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+17. Display flights having the same source and destination.
+
+
+SELECT f1.flightid
+FROM
+(SELECT flightid, flightsource fs, flightdest fd FROM flight GROUP BY fs, fd)f1,
+(SELECT flightid, flightsource fs, flightdest fd FROM flight GROUP BY fs, fd)f2
+WHERE f1.fs=f2.fs AND f1.fd=f2.fd;
+
+
+SELECT flightid, flightsource, flightdest
+FROM flight;
+
+
+
+SELECT flightid, flightsource, flightdest
+FROM flight
+WHERE flightsource IN (SELECT flightdest FROM flight)
+AND flightdest IN (SELECT flightsource FROM flight)
+
+
+SELECT f1.flightid, concat(f1.flightsource, f1.flightdest) c1, concat(f2.flightsource, f2.flightdest) c2
+FROM flight f1, flight f2
+WHERE f1.flightid!=f2.flightid AND concat(f1.flightsource, f1.flightdest)=concat(f2.flightsource, f2.flightdest);
+
++----------+---------+---------+
+| flightid | c1      | c2      |
++----------+---------+---------+
+|        8 | kolhyd  | kolhyd  |
+|        7 | punekol | punekol |
+|        3 | punekol | punekol |
+|        1 | kolhyd  | kolhyd  |
++----------+---------+---------+
+4 rows in set (0.00 sec)
+
+
+
+FINAL>>>>>>>>>>>>>>
+
+
+SELECT f1.flightid
+FROM flight f1, flight f2
+WHERE f1.flightid!=f2.flightid 
+	AND concat(f1.flightsource, f1.flightdest)=concat(f2.flightsource, f2.flightdest);
+
+
++----------+
+| flightid |
++----------+
+|        8 |
+|        7 |
+|        3 |
+|        1 |
++----------+
+4 rows in set (0.00 sec)
+
+
+
+
+OR 
+
+
+
+
+SELECT f1.flightid, f1.flightsource, f1.flightdest
+FROM flight f1, flight f2
+WHERE f1.flightsource=f2.flightsource
+	AND f1.flightdest=f2.flightdest
+	AND f1.flightid!=f2.flightid;
+
+
+
++----------+--------------+------------+
+| flightid | flightsource | flightdest |
++----------+--------------+------------+
+|        8 | kol          | hyd        |
+|        7 | pune         | kol        |
+|        3 | pune         | kol        |
+|        1 | kol          | hyd        |
++----------+--------------+------------+
+4 rows in set (0.01 sec)
+
+
+
+
+-----------------------------------------------------------------------------------------
+18. Display the record in the following format. Column alias
+“Booking Summary”
+Hints:
+“ Ticket No:1 Flight id: 1 Total Passengers :3 Total Fare:6000”
+“Ticket No:2 Flight id: 3 Total Passengers :1 Total Fare :2500”
+
+
+
+SELECT b.bookingid, b.flightid, bd.passid, f.ticketcost
+FROM flight f, booking b, booking_details bd
+WHERE f.flightid=b.flightid AND b.bookingid=bd.bookingid;
+
++-----------+----------+--------+------------+
+| bookingid | flightid | passid | ticketcost |
++-----------+----------+--------+------------+
+|         1 |        1 |      1 |       2000 |
+|         4 |        5 |      1 |       2600 |
+|         1 |        1 |      2 |       2000 |
+|         5 |        4 |      2 |       2300 |
+|         1 |        1 |      3 |       2000 |
+|         5 |        4 |      3 |       2300 |
+|         2 |        3 |      4 |       2500 |
+|         5 |        4 |      4 |       2300 |
+|         3 |        4 |      5 |       2300 |
+|         3 |        4 |      6 |       2300 |
++-----------+----------+--------+------------+
+10 rows in set (0.00 sec)
+
+
+SELECT b.bookingid, b.flightid, count(bd.passid), sum(f.ticketcost)
+FROM flight f, booking b, booking_details bd
+WHERE f.flightid=b.flightid AND b.bookingid=bd.bookingid
+GROUP BY b.bookingid;
+
++-----------+----------+------------------+-------------------+
+| bookingid | flightid | count(bd.passid) | sum(f.ticketcost) |
++-----------+----------+------------------+-------------------+
+|         1 |        1 |                3 |              6000 |
+|         2 |        3 |                1 |              2500 |
+|         3 |        4 |                2 |              4600 |
+|         4 |        5 |                1 |              2600 |
+|         5 |        4 |                3 |              6900 |
++-----------+----------+------------------+-------------------+
+5 rows in set (0.00 sec)
+
+
+
+SELECT CONCAT("T#", b.bookingid,  " F#", b.flightid, " Tot Pass:", count(bd.passid), " Total Fare: ", sum(f.ticketcost)) as "BOOKING SUMMARY"
+FROM flight f, booking b, booking_details bd
+WHERE f.flightid=b.flightid AND b.bookingid=bd.bookingid
+GROUP BY b.bookingid;
+
++-------------------------------------+
+| BOOKING SUMMARY                     |
++-------------------------------------+
+| T#1 F#1 Tot Pass:3 Total Fare: 6000 |
+| T#2 F#3 Tot Pass:1 Total Fare: 2500 |
+| T#3 F#4 Tot Pass:2 Total Fare: 4600 |
+| T#4 F#5 Tot Pass:1 Total Fare: 2600 |
+| T#5 F#4 Tot Pass:3 Total Fare: 6900 |
++-------------------------------------+
+5 rows in set (0.01 sec)
+
+
+SELECT CONCAT(	"Ticket No:", b.bookingid,  
+		", Flight No:", b.flightid, 
+		", Total Passenger:", count(bd.passid), 
+		", Total Fare:", sum(f.ticketcost),
+		) as "BOOKING SUMMARY"
+
+FROM flight f, booking b, booking_details bd
+WHERE f.flightid=b.flightid AND b.bookingid=bd.bookingid
+GROUP BY b.bookingid;
+
+
++--------------------------------------------------------------+
+| BOOKING SUMMARY                                              |
++--------------------------------------------------------------+
+| Ticket No:1, Flight No:1, Total Passenger:3, Total Fare:6000 |
+| Ticket No:2, Flight No:3, Total Passenger:1, Total Fare:2500 |
+| Ticket No:3, Flight No:4, Total Passenger:2, Total Fare:4600 |
+| Ticket No:4, Flight No:5, Total Passenger:1, Total Fare:2600 |
+| Ticket No:5, Flight No:4, Total Passenger:3, Total Fare:6900 |
++--------------------------------------------------------------+
+5 rows in set (0.01 sec)
+
+
+
+
+
+
+FINAL>>>>>>>>>>>>>>>>>>
+
+
+
+
+
+
+
+SELECT CONCAT("\"", "Ticket No:", b.bookingid,  
+		", Flight No:", b.flightid, 
+		", Total Passenger:", count(bd.passid), 
+		", Total Fare:", sum(f.ticketcost),
+		"\""
+		) as "BOOKING SUMMARY"
+
+FROM flight f, booking b, booking_details bd
+WHERE f.flightid=b.flightid AND b.bookingid=bd.bookingid
+GROUP BY b.bookingid;
+
++----------------------------------------------------------------+
+| BOOKING SUMMARY                                                |
++----------------------------------------------------------------+
+| "Ticket No:1, Flight No:1, Total Passenger:3, Total Fare:6000" |
+| "Ticket No:2, Flight No:3, Total Passenger:1, Total Fare:2500" |
+| "Ticket No:3, Flight No:4, Total Passenger:2, Total Fare:4600" |
+| "Ticket No:4, Flight No:5, Total Passenger:1, Total Fare:2600" |
+| "Ticket No:5, Flight No:4, Total Passenger:3, Total Fare:6900" |
++----------------------------------------------------------------+
+5 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------
+19. Flight No: 2 have been delayed for 4 hrs due to fog. Display flight id , flight date and a new column “flight new date”, which displays the new timing.
+
+
+ 
+SELECT flightid, flightdate, addtime(flightdate, '04:00:00') as "Flight New Date"
+FROM flight
+WHERE flightid='2';
+
++----------+---------------------+---------------------+
+| flightid | flightdate          | Flight New Date     |
++----------+---------------------+---------------------+
+|        2 | 2012-12-02 22:09:01 | 2012-12-03 02:09:01 |
++----------+---------------------+---------------------+
+1 row in set (0.00 sec)
+
+
+
+
+OR 
+
+
+	
+
+SELECT flightid, flightdate, date_add(flightdate, INTERVAL 4 hour) as "Flight New Date"
+FROM flight
+WHERE flightid='2';
+
++----------+---------------------+---------------------+
+| flightid | flightdate          | Flight New Date     |
++----------+---------------------+---------------------+
+|        2 | 2012-12-02 22:09:01 | 2012-12-03 02:09:01 |
++----------+---------------------+---------------------+
+1 row in set (0.00 sec)
+
+
+
+
+-----------------------------------------------------------------------------------------
+20. Display passenger name , date of birth sorted by the month of birth .(Jan ? Dec).
+
+SELECT passname, passdob, month(passdob)
+FROM passenger
+ORDER BY month(passdob);
+
+
+
++-----------+------------+----------------+
+| passname  | passdob    | month(passdob) |
++-----------+------------+----------------+
+| sita      | 1988-02-06 |              2 |
+| elizabeth | 1976-05-09 |              5 |
+| kaushik   | 1955-08-08 |              8 |
+| mica      | 1973-09-18 |              9 |
+| hira      | 1939-11-11 |             11 |
+| Rajesh    | 1980-12-01 |             12 |
++-----------+------------+----------------+
+6 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+-- 
+You received this message because you are subscribed to the Google Groups "Sociable29" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to sociable29+unsubscribe@googlegroups.com.
+To post to this group, send an email to sociable29@googlegroups.com.
+To view this discussion on the web, visit https://groups.google.com/d/msgid/sociable29/c39eb015-3974-4f83-ac43-9c98fa60a291%40googlegroups.com.
+For more options, visit https://groups.google.com/d/optout.

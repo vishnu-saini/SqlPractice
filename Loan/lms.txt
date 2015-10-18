@@ -1,0 +1,300 @@
+CREATE DATABASE lonems;
+
+USE lonems;
+
+CREATE TABLE employee_master
+(
+employee_id VARCHAR(6),
+employee_name VARCHAR(20),
+designation VARCHAR(25), 
+department VARCHAR(25),
+gender CHAR(1),
+date_of_birth DATE,
+date_of_joining DATE,
+CONSTRAINT employee_master_employee_id_pk PRIMARY KEY(employee_id)
+);
+
+
+CREATE TABLE item_master
+(
+item_id VARCHAR(6),
+item_description VARCHAR(25),
+issue_status CHAR(1),
+item_make VARCHAR(25),
+item_category VARCHAR(20),
+item_valuation INT(6),
+CONSTRAINT item_master_item_id_pk PRIMARY KEY (item_id)
+);
+
+
+CREATE TABLE loan_card_master
+(
+loan_id VARCHAR(6), 
+loan_type VARCHAR(15), 
+duration_in_years INT(2),
+CONSTRAINT loan_card_master_loan_id_pk PRIMARY KEY (loan_id)
+);
+
+
+
+CREATE TABLE employee_issue_details
+(
+issue_id VARCHAR(6),
+employee_id VARCHAR(6),
+item_id VARCHAR(6), 
+issue_date DATE,
+return_date DATE,
+CONSTRAINT employee_issue_details_issue_id_pk PRIMARY KEY (issue_id),
+CONSTRAINT employee_issue_details_customer_id_fk FOREIGN KEY(employee_id) REFERENCES employee_master(employee_id),
+CONSTRAINT employee_issue_details_item_id_fk FOREIGN KEY(item_id) REFERENCES item_master(item_id)
+);
+
+
+CREATE TABLE employee_card_details
+(
+employee_id VARCHAR(6), 
+loan_id VARCHAR(6), 
+card_issue_date DATE,
+CONSTRAINT employee_card_details_employee_id_fk FOREIGN KEY(employee_id) REFERENCES employee_master(employee_id),
+CONSTRAINT employee_card_details_loan_id_fk FOREIGN KEY(loan_id) REFERENCES loan_card_master(loan_id)
+);
+
+
+
+---------------------------------------------------------------------------------------------------------
+
+
+insert into employee_master values('E00001','Ram','Manager','Finance','M','1973-12-01','2000-01-01');
+insert into employee_master values('E00002','Abhay','Assistant Manager','Finance','M','1976-01-01','2006-12-01');
+insert into employee_master values('E00003','Anita','Senior Executive','Marketing','F','1977-05-12','2007-03-21');
+insert into employee_master values('E00004','Zuben','Manager','Marketing','M','1974-10-12','2003-07-23');
+insert into employee_master values('E00005','Radhica','Manager','HR','F','1976-07-22','2004-01-23');
+insert into employee_master values('E00006','John','Executive','HR','M','1983-11-08','2010-05-17');
+
+
+insert into item_master values('I00001','Tea Table','Y','Wooden','Furniture',5000);
+insert into item_master values('I00002','Dinning Table','N','Wooden','Furniture',15000);
+insert into item_master values('I00003','Tea Table','N','Steel','Furniture',6000);
+insert into item_master values('I00004','Side Table','Y','Wooden','Furniture',2000);    
+insert into item_master values('I00005','Side Table','Y','Steel','Furniture',1500);
+insert into item_master values('I00006','Tea Table','N','Steel','Furniture',7000);
+insert into item_master values('I00007','Dinning Chair','Y','Wooden','Furniture',1500);
+insert into item_master values('I00008','Tea Table','Y','Wooden','Furniture',4000);
+insert into item_master values('I00009','Sofa','N','Wooden','Furniture',18000);
+insert into item_master values('I00010','Cupboard','Y','Steel','Furniture',10000);
+insert into item_master values('I00011','Cupboard','N','Steel','Furniture',14000);
+insert into item_master values('I00012','Double Bed','Y','Wooden','Furniture',21000);
+insert into item_master values('I00013','Double Bed','Y','Wooden','Furniture',20000);
+insert into item_master values('I00014','Single Bed','Y','Steel','Furniture',10000);
+insert into item_master values('I00015','Single Bed','N','Steel','Furniture',10000);
+insert into item_master values('I00016','Tea Set','Y','Glass','Crockery',3000);
+insert into item_master values('I00017','Tea Set','Y','Bonechina','Crockery',4000);   
+insert into item_master values('I00018','Dinning Set','Y','Glass','Crockery',4500);
+insert into item_master values('I00019','Dinning Set','N','Bonechina','Crockery',5000);
+insert into item_master values('I00020','Pencil','Y','Wooden','Stationary',5);
+insert into item_master values('I00021','Pen','Y','Plastic','Stationary',100);
+insert into item_master values('I00022','Pen','N','Plastic','Stationary',200);
+
+
+
+
+insert into loan_card_master values('L00001','Furniture',5);    
+insert into loan_card_master values('L00002','Stationary',0);    
+insert into loan_card_master values('L00003','Crockery',1);   
+ 
+
+
+
+
+insert into employee_issue_details values('ISS001','E00001','I00001','2012-02-03','2014-02-03'); 
+insert into employee_issue_details values('ISS002','E00001','I00004','2012-02-03','2020-02-03');
+insert into employee_issue_details values('ISS003','E00002','I00005','2013-01-03','2015-01-03');
+insert into employee_issue_details values('ISS004','E00003','I00007','2010-07-04','2012-07-04');
+insert into employee_issue_details values('ISS005','E00003','I00008','2010-07-04','2012-08-05');
+insert into employee_issue_details values('ISS006','E00003','I00010','2012-03-14','2012-06-15');
+insert into employee_issue_details values('ISS007','E00004','I00012','2013-04-14','2016-04-14');
+insert into employee_issue_details values('ISS008','E00006','I00018','2012-08-18','2019-04-17');
+insert into employee_issue_details values('ISS009','E00004','I00018','2013-04-18','2013-05-18');
+
+
+
+
+
+insert into  employee_card_details values('E00001','L00001','2000-01-01');
+insert into  employee_card_details values('E00001','L00002','2000-01-01');
+insert into  employee_card_details values('E00001','L00003','2002-12-14');
+insert into  employee_card_details values('E00002','L00001','2007-02-01');
+insert into  employee_card_details values('E00002','L00002','2007-03-11');
+insert into  employee_card_details values('E00003','L00001','2007-04-15');
+insert into  employee_card_details values('E00003','L00002','2007-04-15');
+insert into  employee_card_details values('E00003','L00003','2007-04-15');
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Problem #1:
+
+Write a query to display gender and their count.  Give the count an alias name of Count.
+
+
+Problem #2:
+Write a query to display employee id, employee name who joined the company after 2005.
+
+
+
+
+Problem#3:
+Write a query to display employee id, employee name,designation and department for employees who never issued an item as a loan from the company.
+
+
+
+
+
+
+Problem # 4:
+ Write a query to count the number of employees in HR department. Give the alias name as Count.
+
+
+
+
+Problem # 5:
+Write a query to display category and number of items in that category. Give the count an alias name of Count.
+Display the details on the sorted order of count in descending order.
+
+
+
+Problem # 6:
+Write a query to display issue_id, employee_id, employee_name.
+
+
+
+
+
+Problem # 7:       
+Write a query to count the number of cards issued to an employee id E00001.  Give the count an alias name as Count.
+
+
+Problem # 8:
+Write a  query to count Furniture issued and Furniture which are not issued.
+
+
+
+Problem # 9:
+Write a count of customers who have gone for loan type stationary.
+
+
+
+Problem # 10:
+Write a query to display employee id , employee name who don’t have loan cards.
+
+
+
+
+Problem# 11:
+Write a query to count the items category wise within that make wise within that  description wise. Give the count an alias name of Count
+
+
+
+Problem # 12:
+Write a query to display issue id, employee id, employee name, item id, item description.  Display the data on sorted order of date. The latest year first but within that month should be in ascending order.
+
+
+
+
+
+Problem # 13:
+Write a query to display the employee id, employee name   and number of items issued to them. Give the count an alias name as Count. Display the details in descending order of count.
+
+
+Problem # 14:
+Write a query to display the employee id, employee name and total valuation of the product issued to each employee.  Give the alias name as TOTAL_VALUATION.
+
+
+Problem # 15:
+Write a query to display employee id , employee name , count of items who asked for more then 1 furniture. Give the alias name for count of items as COUNT_ITEMS.
+
+
+Problem # 16:
+Write a query to display the employee id, employee name who issue items in at least 2 different categories.
+Give the alias name for category count as COUNT_CATEGORY.
+
+
+
+
+Problem # 17:
+Write a query to display  employee id, employee name, item id , item name who issued the item in the month of January 2013.
+
+
+
+
+Problem # 18:
+Write a query to display the item id , item name which were never issued to any employee.
+Solution:
+
+
+
+
+Problem # 19:
+Write a query to display distinct employee id ,employee name who kept the item issued for more then a year.
+
+
+
+
+Problem # 20:  
+Display the employee id , employee name  who have never issued the item in the year 2013. Exclude those
+Records who never issued the items.
+
+
+Problem # 21:   
+Write a query to display the employee id, employee name, card issue date, card invalid date.
+Order by employee name. Give the alias name to display the invalid date as CARD_INVALIDATE.
+
+[Hint :  Validity in years for the loan card is given in  loan_card_master table. Invalid date is calculated by adding number of years in the loan card issue date. ]
+
+
+Problem #22:
+
+Write a query to display the employee id, employee name who was issued  an item of highest valuation.
+
+[Hint Suppose an item called dinning table is of 22000 and that is the highest price. So display the employee id and employee name who issued dinning table whose price is 22000.]
+
+
+
+Problem#23:
+
+Write a query to display the employee id, employee name and  for employee who has issued  maximum total valuation of the product.  Give the alias name for total valuation as TOTAL_VALUATION.
+
+[ Hint: Suppose an employee E00019 issued item of price 5000, 10000, 12000 and E00020 issue item of price 2000, 7000, 1000. So the valuation of items taken by E00019 is 27000 and for E00020 it is 10000. So the employee id , employee name  of E00019 should  displayed. ]
+
+
+
+Problem # 24:
+Write a query to display the employee id, employee name and  for employee who has issued  minimum  total valuation of the product.  Give the alias name for total valuation as TOTAL_VALUATION.
+
+[ Hint: Suppose an employee E00019 issued item of price 5000, 10000, 12000 and E00020 issue item of price 2000, 7000, 1000. So the valuation of items taken by E00019 is 27000 and for E00020 it is 10000. So the employee id , employee name  of E00020 should  be displayed. ]
+
+
+
+
+
+Problem # 25:   
+Write a query to display the employee id, employee name who was issued  an item of minimum valuation.
+
+[Hint Suppose an item called  pen  is of rupees 20 and that is the lowest price. So display the employee id and employee name who issued pen where the valuation is 20.]
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+SELECT mm.movie_id,mm.movie_name,year(mm.release_date),mm.director
+from movies_master mm where lead_role_1 in(
+select lead_role_1 from movies_master
+group by lead_role_1
+having count(movie_id) =(select max(s) from
+(select count(movie_id) as 's' from movies_master GROUP BY lead_role_1) ss))
+ORDER BY mm.movie_name ASC;

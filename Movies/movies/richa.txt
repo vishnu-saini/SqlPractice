@@ -1,0 +1,38 @@
+5)select cm.customer_id,ucase(cm.customer_name) as CUSTOMER_NAME,cm.contact_no,cm.contact_address
+from customer_master cm inner join customer_card_details ccd 
+on cm.customer_id=ccd.customer_id
+inner join customer_issue_details cid
+on cm.customer_id=cid.customer_id
+where ccd.card_id null and cid.movie_id not null and cm.contact_address like '%nagar'
+order by cm.customer_name asc;
+
+
+1)select cid.issue_date,cm.customer_id,cm.customer_name,cm.contact_no
+from customer_master cm inner join customer_issue_details cid
+on cm.customer_id=cid.customer_id
+where year(cid.issue_date)='2013'
+order by year(cid.issue_date) desc;
+
+2)select cm.customer_name,coalesce(cm.contact_no,cm.contact_address) as CONTACT_DETAILS,lcm.card_id,lcm.description
+from customer_master cm left outer join customer_card_details ccd
+on cm.customer_id=ccd.customer_id
+inner join library_card_master lcm
+on lcm.card_id=ccd.card_id
+order by cm.customer_name asc;
+
+3)select cid.customer_id,sum(mm.rental_cost) as TOTAL_COST
+from customer_issue_details cid inner join movie_master mm
+on mm.movie_id=cid.movie_id
+group by cid.customer_id
+order by cid.customer_id asc;
+
+4)SELECT mm.movie_id,mm.movie_name,mm.release_year,mm.director_name
+from movie_master mm
+group by mm.lead_actor_name1 
+having count(movie_id) =(select max(s) from (select count(movie_id) as 's' from movie_master GROUP BY lead_actor_name1) ss)
+ORDER BY mm.movie_name ASC;
+
+6. select mm.movie_name,coalese(count(cid.issue_id),0) as ISSUE_COUNT
+from movie_master mm inner join customer_issue_details cid on cid.movie_id=mm.movie_id
+group by cid.movie_id
+ORDER BY count(cid.issue_id) DESC,mm.movie_name ASC;

@@ -1,0 +1,961 @@
+DROP DATABASE lms_db;
+CREATE DATABASE lms_db;
+USE lms_db;
+Create table LMS_MEMBERS
+(
+	MEMBER_ID Varchar(10),
+	MEMBER_NAME Varchar(30) NOT NULL,
+	CITY Varchar(20),
+	DATE_REGISTER Date NOT NULL,
+	DATE_EXPIRE Date ,
+	MEMBERSHIP_STATUS Varchar(15)NOT NULL,
+	Constraint LMS_cts1 PRIMARY KEY(MEMBER_ID)
+);
+
+Create table LMS_SUPPLIERS_DETAILS
+(
+	SUPPLIER_ID Varchar(3),
+	SUPPLIER_NAME Varchar(30) NOT NULL,
+	ADDRESS	Varchar(50),
+	CONTACT bigint(10) NOT NULL,
+	EMAIL Varchar(15) NOT NULL,
+	Constraint LMS_cts2 PRIMARY KEY(SUPPLIER_ID)
+);
+
+Create table LMS_FINE_DETAILS
+(
+	FINE_RANGE Varchar(3),
+	FINE_AMOUNT decimal(10,2) NOT NULL,
+	Constraint LMS_cts3 PRIMARY KEY(FINE_RANGE)
+);
+
+
+Create table LMS_BOOK_DETAILS
+(
+	BOOK_CODE Varchar(10),	
+	BOOK_TITLE Varchar(50) NOT NULL,
+	CATEGORY Varchar(15) NOT NULL,
+	AUTHOR Varchar(30) NOT NULL,
+	PUBLICATION Varchar(30),
+	PUBLISH_DATE Date,
+	BOOK_EDITION int(2),
+	PRICE decimal(8,2) NOT NULL,	
+	RACK_NUM Varchar(3),
+	DATE_ARRIVAL Date NOT NULL, 		
+	SUPPLIER_ID Varchar(3) NOT NULL,
+	Constraint LMS_cts4 PRIMARY KEY(BOOK_CODE), 
+        Constraint LMS_cts41 FOREIGN KEY(SUPPLIER_ID) References LMS_SUPPLIERS_DETAILS(SUPPLIER_ID)
+);
+
+
+Create table LMS_BOOK_ISSUE
+(
+	BOOK_ISSUE_NO int,
+	MEMBER_ID Varchar(10) NOT NULL,
+	BOOK_CODE Varchar(10) NOT NULL,
+	DATE_ISSUE Date NOT NULL,
+	DATE_RETURN Date NOT NULL,
+        DATE_RETURNED Date NULL,
+	FINE_RANGE Varchar(3),
+	Constraint LMS_cts5 PRIMARY KEY(BOOK_ISSUE_NO),
+        Constraint LMS_Mem FOREIGN KEY(MEMBER_ID) References LMS_MEMBERS(MEMBER_ID),
+        Constraint LMS_BookDetail FOREIGN KEY(BOOK_CODE) References LMS_BOOK_DETAILS(BOOK_CODE),
+	Constraint LMS_FineDetail FOREIGN KEY(FINE_RANGE) References LMS_FINE_DETAILS(FINE_RANGE)
+);
+
+
+
+
+
+
+
+--------------------------------------------------------------------------
+
+
+
+
+
+
+Insert into LMS_MEMBERS
+Values('LM001', 'AMIT', 'CHENNAI', '2012-02-12', '2013-02-11','Temporary');
+Insert into LMS_MEMBERS
+Values('LM002', 'ABDHUL', 'DELHI', '2012-04-10', '2013-04-09','Temporary');
+Insert into LMS_MEMBERS
+Values('LM003', 'GAYAN', 'CHENNAI', '2012-05-13','2013-05-12', 'Permanent');
+Insert into LMS_MEMBERS
+Values('LM004', 'RADHA', 'CHENNAI', '2012-04-22', '2013-04-21', 'Temporary');
+Insert into LMS_MEMBERS
+Values('LM005', 'GURU', 'BANGALORE', '2012-03-30', '2013-05-16','Temporary');
+Insert into LMS_MEMBERS
+Values('LM006', 'MOHAN', 'CHENNAI', '2012-04-12', '2013-05-16','Temporary');
+
+
+Insert into  LMS_SUPPLIERS_DETAILS 
+Values ('S01','SINGAPORE SHOPPEE', 'CHENNAI', 9894123555,'sing@gmail.com');
+Insert into  LMS_SUPPLIERS_DETAILS 
+Values ('S02','JK Stores', 'MUMBAI', 9940123450 ,'jks@yahoo.com');
+Insert into  LMS_SUPPLIERS_DETAILS 
+Values ('S03','ROSE BOOK STORE', 'TRIVANDRUM', 9444411222,'rose@gmail.com');
+Insert into  LMS_SUPPLIERS_DETAILS 
+Values ('S04','KAVARI STORE', 'DELHI', 8630001452,'kavi@redif.com');
+Insert into  LMS_SUPPLIERS_DETAILS 
+Values ('S05','EINSTEN BOOK GALLARY', 'US', 9542000001,'eingal@aol.com');
+Insert into  LMS_SUPPLIERS_DETAILS 
+Values ('S06','AKBAR STORE', 'MUMBAI',7855623100 ,'akbakst@aol.com');
+
+Insert into LMS_FINE_DETAILS Values('R0', 0);
+Insert into LMS_FINE_DETAILS Values('R1', 20);
+insert into LMS_FINE_DETAILS Values('R2', 50);
+Insert into LMS_FINE_DETAILS Values('R3', 75);
+Insert into LMS_FINE_DETAILS Values('R4', 100);
+Insert into LMS_FINE_DETAILS Values('R5', 150);
+Insert into LMS_FINE_DETAILS Values('R6', 200);
+
+
+Insert into LMS_BOOK_DETAILS
+Values('BL000001', 'Java How To Do Program', 'JAVA', 'Paul J. Deitel', 'Prentice Hall', '1999-12-10', 6, 600.00, 'A1', '2011-05-10', 'S01');
+Insert into LMS_BOOK_DETAILS
+Values('BL000002', 'Java: The Complete Reference ', 'JAVA', 'Herbert Schildt',  'Tata Mcgraw Hill ', '2011-10-10', 5, 750.00, 'A1', '2011-05-10', 'S03');
+Insert into LMS_BOOK_DETAILS 
+Values('BL000003', 'Java How To Do Program', 'JAVA', 'Paul J. Deitel', 'Prentice Hall', '1999-05-10', 6, 600.00, 'A1', '2012-05-10', 'S01');
+Insert into LMS_BOOK_DETAILS
+Values('BL000004', 'Java: The Complete Reference ', 'JAVA', 'Herbert Schildt', 'Tata Mcgraw Hill ', '2011-10-10', 5, 750.00, 'A1', '2012-05-11', 'S01');
+Insert into LMS_BOOK_DETAILS 
+Values('BL000005', 'Java How To Do Program', 'JAVA', 'Paul J. Deitel',  'Prentice Hall', '1999-12-10', 6, 600.00, 'A1', '2012-05-11', 'S01');
+Insert into LMS_BOOK_DETAILS
+Values('BL000006', 'Java: The Complete Reference ', 'JAVA', 'Herbert Schildt', 'Tata Mcgraw Hill ', '2011-10-10', 5, 750.00, 'A1', '2012-05-12', 'S03');
+Insert into LMS_BOOK_DETAILS 
+Values('BL000007', 'Let Us C', 'C', 'Yashavant Kanetkar ', 'BPB Publications', '2010-12-11',  9, 500.00 , 'A3', '2010-11-03', 'S03');
+Insert into LMS_BOOK_DETAILS 
+Values('BL000008', 'Let Us C', 'C', 'Yashavant Kanetkar ','BPB Publications', '2010-05-12',  9, 500.00 , 'A3', '2011-08-09', 'S04');
+
+
+Insert into LMS_BOOK_ISSUE 
+Values (001, 'LM001', 'BL000001', '2012-05-01', '2012-05-16', '2012-05-16', 'R0');
+Insert into LMS_BOOK_ISSUE 
+Values (002, 'LM002', 'BL000002', '2012-05-01', '2012-05-06','2012-05-16', 'R2');
+Insert into LMS_BOOK_ISSUE
+Values (003, 'LM003', 'BL000007', '2012-04-01', '2012-04-16', '2012-04-20','R1');
+Insert into LMS_BOOK_ISSUE 
+Values (004, 'LM004', 'BL000005', '2012-04-01', '2012-04-16','2012-04-20', 'R1');
+Insert into LMS_BOOK_ISSUE 
+Values (005, 'LM005', 'BL000008', '2012-03-30', '2012-04-15','2012-04-20' , 'R1');
+Insert into LMS_BOOK_ISSUE 
+Values (006, 'LM005', 'BL000008', '2012-04-20', '2012-05-05','2012-05-05' , 'R0');
+Insert into LMS_BOOK_ISSUE 
+Values (007, 'LM003', 'BL000007', '2012-04-22', '2012-05-07','2012-05-25' , 'R4');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+Problem # 1:
+Write a query to display the member id, member name, city and membership status who are all having life time membership. Hint: Life time membership status is “Permanent”.
+
+
+SELECT MEMBER_ID, MEMBER_NAME, CITY, MEMBERSHIP_STATUS 
+FROM LMS_MEMBERS 
+WHERE MEMBERSHIP_STATUS='Permanent';
+
+
++-----------+-------------+---------+-------------------+
+| MEMBER_ID | MEMBER_NAME | CITY    | MEMBERSHIP_STATUS |
++-----------+-------------+---------+-------------------+
+| LM003     | GAYAN       | CHENNAI | Permanent         |
++-----------+-------------+---------+-------------------+
+1 row in set (0.00 sec)
+
+
+--------------------------------------------------------------------------------------------
+Problem # 2:
+Write a query to display the member id, member name who have not returned the books. Hint: Book return status is book_issue_status ='Y' or 'N'.
+
+SELECT DISTINCT m.MEMBER_ID, m.MEMBER_NAME 
+FROM LMS_MEMBERS m JOIN LMS_BOOK_ISSUE b 
+WHERE m.MEMBER_ID=b.MEMBER_ID AND DATE_RETURNED IS NOT NULL;
+
++-----------+-------------+
+| MEMBER_ID | MEMBER_NAME |
++-----------+-------------+
+| LM001     | AMIT        |
+| LM002     | ABDHUL      |
+| LM003     | GAYAN       |
+| LM004     | RADHA       |
+| LM005     | GURU        |
++-----------+-------------+
+5 rows in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 3:
+Write a query to display the member id, member name who have taken the book with book code 'BL000002'.
+
+SELECT DISTINCT m.MEMBER_ID, m.MEMBER_NAME 
+FROM LMS_MEMBERS m JOIN LMS_BOOK_ISSUE b 
+WHERE m.MEMBER_ID=b.MEMBER_ID AND b.BOOK_CODE='BL000002';
+
+
++-----------+-------------+
+| MEMBER_ID | MEMBER_NAME |
++-----------+-------------+
+| LM002     | ABDHUL      |
++-----------+-------------+
+1 row in set (0.01 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 4:
+Write a query to display the book code, book title and author of the books whose author name begins with 'P'.
+
+SELECT BOOK_CODE, BOOK_TITLE, AUTHOR
+FROM LMS_BOOK_DETAILS
+WHERE AUTHOR LIKE 'P%';
+
+
++-----------+------------------------+----------------+
+| BOOK_CODE | BOOK_TITLE             | AUTHOR         |
++-----------+------------------------+----------------+
+| BL000001  | Java How To Do Program | Paul J. Deitel |
+| BL000003  | Java How To Do Program | Paul J. Deitel |
+| BL000005  | Java How To Do Program | Paul J. Deitel |
++-----------+------------------------+----------------+
+3 rows in set (0.00 sec)
+
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 5:
+Write a query to display the total number of Java books available in library with alias name ‘NO_OF_BOOKS’.
+
+SELECT COUNT(*) AS 'NO_OF_BOOKS' FROM LMS_BOOK_DETAILS WHERE CATEGORY='JAVA';
+
++-------------+
+| NO_OF_BOOKS |
++-------------+
+|           6 |
++-------------+
+1 row in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 6:
+Write a query to list the category and number of books in each category with alias name ‘NO_OF_BOOKS’.
+
+SELECT CATEGORY, COUNT(*) AS 'NO_OF_BOOKS' FROM LMS_BOOK_DETAILS GROUP BY CATEGORY;
+
++----------+-------------+
+| CATEGORY | NO_OF_BOOKS |
++----------+-------------+
+| C        |           2 |
+| JAVA     |           6 |
++----------+-------------+
+2 rows in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 7:
+Write a query to display the number of books published by "Prentice Hall” with the alias name “NO_OF_BOOKS”.
+
+SELECT COUNT(*) AS 'NO_OF_BOOKS' FROM LMS_BOOK_DETAILS WHERE PUBLICATION='Prentice Hall';
+
++-------------+
+| NO_OF_BOOKS |
++-------------+
+|           3 |
++-------------+
+1 row in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 8:
+Write a query to display the book code, book title of the books which are issued on the date "1st April 2012".
+
+SELECT b.BOOK_CODE, BOOK_TITLE 
+FROM LMS_BOOK_DETAILS b JOIN LMS_BOOK_ISSUE i 
+WHERE b.BOOK_CODE=i.BOOK_CODE AND DATE_ISSUE='2012-04-01';
+
+
+
++-----------+------------------------+
+| BOOK_CODE | BOOK_TITLE             |
++-----------+------------------------+
+| BL000007  | Let Us C               |
+| BL000005  | Java How To Do Program |
++-----------+------------------------+
+2 rows in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 9:
+Write a query to display the member id, member name, date of registration and expiry date of the members whose membership expiry date is before APR 2013.
+
+
+SELECT MEMBER_ID, MEMBER_NAME, DATE_REGISTER, DATE_EXPIRE FROM LMS_MEMBERS WHERE DATE_EXPIRE < '2013-04-01';
+
+
++-----------+-------------+---------------+-------------+
+| MEMBER_ID | MEMBER_NAME | DATE_REGISTER | DATE_EXPIRE |
++-----------+-------------+---------------+-------------+
+| LM001     | AMIT        | 2012-02-12    | 2013-02-11  |
++-----------+-------------+---------------+-------------+
+1 row in set (0.00 sec)
+
+
+--------------------------------------------------------------------------------------------
+Problem # 10:
+write a query to display the member id, member name, date of registration, membership status of the members who registered before "March 2012" and membership status is "Temporary"
+
+
+SELECT MEMBER_ID, MEMBER_NAME, DATE_REGISTER, MEMBERSHIP_STATUS
+FROM LMS_MEMBERS
+WHERE DATE_REGISTER<'2012-03-01' AND MEMBERSHIP_STATUS='Temporary';
+
++-----------+-------------+---------------+-------------------+
+| MEMBER_ID | MEMBER_NAME | DATE_REGISTER | MEMBERSHIP_STATUS |
++-----------+-------------+---------------+-------------------+
+| LM001     | AMIT        | 2012-02-12    | Temporary         |
++-----------+-------------+---------------+-------------------+
+1 row in set (0.00 sec)
+
+
+--------------------------------------------------------------------------------------------
+Problem #11:
+Write a query to display the member id, member name who’s City is CHENNAI or DELHI. Hint: Display the member name in title case with alias name 'Name'.
+
+SELECT MEMBER_ID, MEMBER_NAME 'Name' 
+FROM LMS_MEMBERS
+WHERE CITY IN ('CHENNAI', 'DELHI');
+
+
++-----------+--------+
+| MEMBER_ID | Name   |
++-----------+--------+
+| LM001     | AMIT   |
+| LM002     | ABDHUL |
+| LM003     | GAYAN  |
+| LM004     | RADHA  |
+| LM006     | MOHAN  |
++-----------+--------+
+5 rows in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem #12:
+Write a query to concatenate book title, author and display in the following format.
+Book_Title_is_written_by_Author
+Example: Let Us C_is_written_by_Yashavant Kanetkar
+Hint: display unique books. Use “BOOK_WRITTEN_BY” as alias name.
+
+
+SELECT CONCAT(BOOK_TITLE, "_is_written_by_", Author) 'BOOK_WRITTEN_BY'
+FROM LMS_BOOK_DETAILS;
+
++-------------------------------------------------------------+
+| BOOK_WRITTEN_BY                                             |
++-------------------------------------------------------------+
+| Java How To Do Program_is_written_by_Paul J. Deitel         |
+| Java: The Complete Reference _is_written_by_Herbert Schildt |
+| Java How To Do Program_is_written_by_Paul J. Deitel         |
+| Java: The Complete Reference _is_written_by_Herbert Schildt |
+| Java How To Do Program_is_written_by_Paul J. Deitel         |
+| Java: The Complete Reference _is_written_by_Herbert Schildt |
+| Let Us C_is_written_by_Yashavant Kanetkar                   |
+| Let Us C_is_written_by_Yashavant Kanetkar                   |
++-------------------------------------------------------------+
+8 rows in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem #13:
+Write a query to display the average price of books which is belonging to ‘JAVA’ category with alias name “AVERAGEPRICE”.
+
+
+
+SELECT AVG(PRICE) AS 'AVERAGEPRICE' FROM LMS_BOOK_DETAILS WHERE CATEGORY='JAVA';
+
++--------------+
+| AVERAGEPRICE |
++--------------+
+|   675.000000 |
++--------------+
+1 row in set (0.00 sec)
+
+
+
+
+
+--------------------------------------------------------------------------------------------
+Problem #14:
+Write a query to display the supplier id, supplier name and email of the suppliers who are all having gmail account.
+
+
+SELECT SUPPLIER_ID, SUPPLIER_NAME, EMAIL FROM LMS_SUPPLIERS_DETAILS
+WHERE EMAIL LIKE '%GMAIL%';
+
++-------------+-------------------+----------------+
+| SUPPLIER_ID | SUPPLIER_NAME     | EMAIL          |
++-------------+-------------------+----------------+
+| S01         | SINGAPORE SHOPPEE | sing@gmail.com |
+| S03         | ROSE BOOK STORE   | rose@gmail.com |
++-------------+-------------------+----------------+
+2 rows in set (0.00 sec)
+
+
+--------------------------------------------------------------------------------------------
+Problem#15:
+Write a query to display the supplier id, supplier name and contact details. Contact details can be either phone number or email or address with alias name “CONTACTDETAILS”. If phone number is null then display email, even if email also null then display the address of the supplier. Hint: Use Coalesce function.
+
+
+
+SELECT SUPPLIER_ID, SUPPLIER_NAME, ifnull(ADDRESS, ifnull(CONTACT, EMAIL)) AS 'CONTACTDETAILS';
+
++-------------+----------------------+----------------+
+| SUPPLIER_ID | SUPPLIER_NAME        | CONTACTDETAILS |
++-------------+----------------------+----------------+
+| S01         | SINGAPORE SHOPPEE    | CHENNAI        |
+| S02         | JK Stores            | MUMBAI         |
+| S03         | ROSE BOOK STORE      | TRIVANDRUM     |
+| S04         | KAVARI STORE         | DELHI          |
+| S05         | EINSTEN BOOK GALLARY | US             |
+| S06         | AKBAR STORE          | MUMBAI         |
++-------------+----------------------+----------------+
+6 rows in set (0.00 sec)
+
+
+--------------------------------------------------------------------------------------------
+Problem#16:
+Write a query to display the supplier id, supplier name and contact. If phone number is null then display ‘No’ else display ‘Yes’ with alias name “PHONENUMAVAILABLE”. Hint: Use NVL2.
+
+
+
+SELECT SUPPLIER_ID, SUPPLIER_NAME, CONTACT, If(CONTACT IS NULL,'No', 'Yes') as “PHONENUMAVAILABLE” 
+FROM LMS_SUPPLIERS_DETAILS;
+
++-------------+----------------------+------------+-------------------+
+| SUPPLIER_ID | SUPPLIER_NAME        | CONTACT    | PHONENUMAVAILABLE |
++-------------+----------------------+------------+-------------------+
+| S01         | SINGAPORE SHOPPEE    | 9894123555 | Yes               |
+| S02         | JK Stores            | 9940123450 | Yes               |
+| S03         | ROSE BOOK STORE      | 9444411222 | Yes               |
+| S04         | KAVARI STORE         | 8630001452 | Yes               |
+| S05         | EINSTEN BOOK GALLARY | 9542000001 | Yes               |
+| S06         | AKBAR STORE          | 7855623100 | Yes               |
++-------------+----------------------+------------+-------------------+
+6 rows in set (0.00 sec)
+
+
+--------------------------------------------------------------------------------------------
+Average Questions:
+--------------------------------------------------------------------------------------------
+Problem # 1:
+Write a query to display the member id, member name of the members, book code and book title of the books 
+taken by them.
+
+SELECT m.MEMBER_ID, m.MEMBER_NAME, b.BOOK_CODE, b.BOOK_TITLE
+FROM LMS_MEMBERS m, LMS_BOOK_DETAILS b, LMS_BOOK_ISSUE i
+WHERE m.MEMBER_ID=i.MEMBER_ID AND i.BOOK_CODE=b.BOOK_CODE;
+
+
++-----------+-------------+-----------+-------------------------------+
+| MEMBER_ID | MEMBER_NAME | BOOK_CODE | BOOK_TITLE                    |
++-----------+-------------+-----------+-------------------------------+
+| LM001     | AMIT        | BL000001  | Java How To Do Program        |
+| LM002     | ABDHUL      | BL000002  | Java: The Complete Reference  |
+| LM003     | GAYAN       | BL000007  | Let Us C                      |
+| LM003     | GAYAN       | BL000007  | Let Us C                      |
+| LM004     | RADHA       | BL000005  | Java How To Do Program        |
+| LM005     | GURU        | BL000008  | Let Us C                      |
+| LM005     | GURU        | BL000008  | Let Us C                      |
++-----------+-------------+-----------+-------------------------------+
+7 rows in set (0.02 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 2:
+Write a query to display the total number of books available in the library with alias name “NO_OF_BOOKS_AVAILABLE” (Which is not issued). Hint: The issued books details are available in the LMS_BOOK_ISSUE table.
+
+
+SELECT COUNT(*) AS "NO_OF_BOOKS_AVAILABLE"
+FROM LMS_BOOK_DETAILS
+WHERE BOOK_CODE NOT IN (SELECT BOOK_CODE FROM LMS_BOOK_ISSUE);
+
++-----------------------+
+| NO_OF_BOOKS_AVAILABLE |
++-----------------------+
+|                     3 |
++-----------------------+
+1 row in set (0.00 sec)
+
+
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 3:
+Write a query to display the member id, member name, fine range and fine amount of the members whose fine amount is less than 100.
+
+
+
+SELECT m.MEMBER_ID, m.MEMBER_NAME, f.FINE_RANGE, f.FINE_AMOUNT 
+FROM LMS_MEMBERS m, LMS_FINE_DETAILS f, LMS_BOOK_ISSUE i
+WHERE m.MEMBER_ID=i.MEMBER_ID AND i.FINE_RANGE=f.FINE_RANGE AND f.FINE_AMOUNT<100;
+
+
++-----------+-------------+------------+-------------+
+| MEMBER_ID | MEMBER_NAME | FINE_RANGE | FINE_AMOUNT |
++-----------+-------------+------------+-------------+
+| LM001     | AMIT        | R0         |        0.00 |
+| LM002     | ABDHUL      | R2         |       50.00 |
+| LM003     | GAYAN       | R1         |       20.00 |
+| LM004     | RADHA       | R1         |       20.00 |
+| LM005     | GURU        | R1         |       20.00 |
+| LM005     | GURU        | R0         |        0.00 |
++-----------+-------------+------------+-------------+
+6 rows in set (0.08 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 4:
+Write a query to display the book code, book title and availability status of the ‘JAVA’ books whose edition is "6”. Show the availability status with alias name “AVAILABILITYSTATUS”. Hint: Book availability status can be fetched from “BOOK_ISSUE_STATUS” column of LMS_BOOK_ISSUE table.
+
+
+SELECT b.BOOK_CODE, b.BOOK_TITLE, if(b.CATEGORY='JAVA' AND b.BOOK_EDITION=6 AND i.BOOK_CODE != b.BOOK_CODE, "AVAILABLE", "NOT AVAILABLE") AS "AVAILABILITYSTATUS               "
+FROM LMS_BOOK_DETAILS b;
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 5:
+Write a query to display the book code, book title and rack number of the books which are placed in rack 'A1' and sort by book title in ascending order.
+
+SELECT b.BOOK_CODE, b.BOOK_TITLE, b.RACK_NUM
+FROM LMS_BOOK_DETAILS b
+WHERE b.RACK_NUM='A1'
+ORDER BY b.BOOK_TITLE;
+
+
+
++-----------+-------------------------------+----------+
+| BOOK_CODE | BOOK_TITLE                    | RACK_NUM |
++-----------+-------------------------------+----------+
+| BL000001  | Java How To Do Program        | A1       |
+| BL000003  | Java How To Do Program        | A1       |
+| BL000005  | Java How To Do Program        | A1       |
+| BL000002  | Java: The Complete Reference  | A1       |
+| BL000004  | Java: The Complete Reference  | A1       |
+| BL000006  | Java: The Complete Reference  | A1       |
++-----------+-------------------------------+----------+
+6 rows in set (0.00 sec)
+
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 6:
+Write a query to display the member id, member name, due date and date returned of the members who has returned the books after the due date. Hint: Date_return is due date and Date_returned is actual book return date.
+
+
+SELECT m.MEMBER_ID, m.MEMBER_NAME, i.DATE_RETURN, i.DATE_RETURNED
+FROM LMS_MEMBERS m, LMS_BOOK_ISSUE i
+WHERE m.MEMBER_ID=i.MEMBER_ID AND i.DATE_RETURNED>i.DATE_RETURN;
+
+
++-----------+-------------+-------------+---------------+
+| MEMBER_ID | MEMBER_NAME | DATE_RETURN | DATE_RETURNED |
++-----------+-------------+-------------+---------------+
+| LM002     | ABDHUL      | 2012-05-06  | 2012-05-16    |
+| LM003     | GAYAN       | 2012-04-16  | 2012-04-20    |
+| LM003     | GAYAN       | 2012-05-07  | 2012-05-25    |
+| LM004     | RADHA       | 2012-04-16  | 2012-04-20    |
+| LM005     | GURU        | 2012-04-15  | 2012-04-20    |
++-----------+-------------+-------------+---------------+
+5 rows in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 7:
+Write a query to display the member id, member name and date of registration who have not taken any book.
+
+
+SELECT m.MEMBER_ID, m.MEMBER_NAME, m.DATE_REGISTER
+FROM LMS_MEMBERS m
+WHERE m.MEMBER_ID NOT IN (SELECT MEMBER_ID FROM LMS_BOOK_ISSUE);
+
+
++-----------+-------------+---------------+
+| MEMBER_ID | MEMBER_NAME | DATE_REGISTER |
++-----------+-------------+---------------+
+| LM006     | MOHAN       | 2012-04-12    |
++-----------+-------------+---------------+
+1 row in set (0.04 sec)
+
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 8:
+Write a Query to display the member id and member name of the members who has not paid any fine in the year 2012.
+
+
+SELECT MEMBER_ID, MEMBER_NAME
+FROM LMS_MEMBERS WHERE MEMBER_ID=(SELECT MEMBER_ID
+FROM LMS_BOOK_ISSUE 
+WHERE MEMBER_ID NOT IN (SELECT DISTINCT(m.MEMBER_ID) 
+FROM LMS_MEMBERS m, LMS_BOOK_ISSUE i 
+WHERE m.MEMBER_ID=i.MEMBER_ID AND i.DATE_RETURNED>i.DATE_RETURN));
+
+
++-----------+-------------+
+| MEMBER_ID | MEMBER_NAME |
++-----------+-------------+
+| LM001     | AMIT        |
++-----------+-------------+
+1 row in set (0.00 sec)
+
+
+
+
+
+SELECT m.MEMBER_ID, m.MEMBER_NAME
+FROM LMS_BOOK_ISSUE i, LMS_MEMBERS m
+WHERE m.MEMBER_ID=i.MEMBER_ID AND m.MEMBER_ID NOT IN (SELECT m.MEMBER_ID
+FROM LMS_MEMBERS m, LMS_BOOK_ISSUE i 
+WHERE m.MEMBER_ID=i.MEMBER_ID AND i.DATE_RETURNED>i.DATE_RETURN);
+
+
++-----------+-------------+
+| MEMBER_ID | MEMBER_NAME |
++-----------+-------------+
+| LM001     | AMIT        |
++-----------+-------------+
+1 row in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 9:
+Write a query to display the date on which the maximum numbers of books were issued and the number of books issued with alias name “NOOFBOOKS”.
+
+
+SELECT DATE_ISSUE, COUNT(*) "NOOFBOOKS"
+FROM LMS_BOOK_ISSUE
+GROUP BY DATE_ISSUE;
+
+
+SELECT DATE_ISSUE, COUNT(*) "NOOFBOOKS"
+FROM LMS_BOOK_ISSUE
+GROUP BY DATE_ISSUE
+ORDER BY NOOFBOOKS DESC
+LIMIT 2;
+
+
++------------+-----------+
+| DATE_ISSUE | NOOFBOOKS |
++------------+-----------+
+| 2012-05-01 |         2 |
+| 2012-04-01 |         2 |
++------------+-----------+
+2 rows in set (0.00 sec)
+
+
+
+SELECT DATE_ISSUE, MAX(C) 'NOOFBOOKS' FROM (SELECT COUNT(*) C FROM LMS_BOOK_ISSUE GROUP BY DATE_ISSUE) a, LMS_BOOK_ISSUE;
+
+
++------------+-----------+
+| DATE_ISSUE | NOOFBOOKS |
++------------+-----------+
+| 2012-05-01 |         2 |
++------------+-----------+
+1 row in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 10:
+Write a query to list the book title and supplier id for the books authored by “Herbert Schildt" and the book edition is 5 and supplied by supplier ‘S01’.
+
+
+SELECT b.BOOK_TITLE, s.SUPPLIER_ID
+FROM LMS_BOOK_DETAILS b, LMS_SUPPLIERS_DETAILS s
+WHERE b.SUPPLIER_ID=s.SUPPLIER_ID AND b.AUTHOR='Herbert Schildt' AND b.BOOK_EDITION=5 AND s.SUPPLIER_ID='s01';
+
+
+
++-------------------------------+-------------+
+| BOOK_TITLE                    | SUPPLIER_ID |
++-------------------------------+-------------+
+| Java: The Complete Reference  | S01         |
++-------------------------------+-------------+
+1 row in set (0.01 sec)
+
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 11:
+Write a query to display the rack number and the number of books in each rack with alias name “NOOFBOOKS” and sort by rack number in ascending order.
+
+
+SELECT b.RACK_NUM, COUNT(b.BOOK_CODE) AS 'NOOFBOOKS'
+FROM LMS_BOOK_DETAILS b
+GROUP BY b.RACK_NUM
+ORDER BY b.RACK_NUM;
+
+
++----------+-----------+
+| RACK_NUM | NOOFBOOKS |
++----------+-----------+
+| A1       |         6 |
+| A3       |         2 |
++----------+-----------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 12:
+Write a query to display book issue number, member name, date or registration, date of expiry, book title, category author, price, date of issue, date of return, actual returned date, issue status, fine amount.
+
+
+
+SELECT i.BOOK_ISSUE_NO, m.MEMBER_NAME, 
+m.DATE_REGISTER, m.DATE_EXPIRE, 
+b.BOOK_TITLE, b.CATEGORY, b.AUTHOR, b.PRICE, 
+i.DATE_ISSUE, i.DATE_RETURN, i.DATE_RETURNED,
+f.FINE_AMOUNT
+FROM LMS_BOOK_DETAILS b, LMS_MEMBERS m, LMS_FINE_DETAILS f, LMS_BOOK_ISSUE i
+WHERE m.MEMBER_ID=i.MEMBER_ID AND i.BOOK_CODE=b.BOOK_CODE AND i.FINE_RANGE=f.FINE_RANGE;
+
+
+
++---------------+-------------+---------------+-------------+-------------------------------+----------+---------------------+--------+-----
+
+| BOOK_ISSUE_NO | MEMBER_NAME | DATE_REGISTER | DATE_EXPIRE | BOOK_TITLE                    | CATEGORY | AUTHOR              | PRICE  | DATE
+_ISSUE | DATE_RETURN | DATE_RETURNED | FINE_AMOUNT |
++---------------+-------------+---------------+-------------+-------------------------------+----------+---------------------+--------+-----
+-------+-------------+---------------+-------------+
+|             1 | AMIT        | 2012-02-12    | 2013-02-11  | Java How To Do Program        | JAVA     | Paul J. Deitel      | 600.00 | 2012
+-05-01 | 2012-05-16  | 2012-05-16    |        0.00 |
+|             2 | ABDHUL      | 2012-04-10    | 2013-04-09  | Java: The Complete Reference  | JAVA     | Herbert Schildt     | 750.00 | 2012
+-05-01 | 2012-05-06  | 2012-05-16    |       50.00 |
+|             3 | GAYAN       | 2012-05-13    | 2013-05-12  | Let Us C                      | C        | Yashavant Kanetkar  | 500.00 | 2012
+-04-01 | 2012-04-16  | 2012-04-20    |       20.00 |
+|             7 | GAYAN       | 2012-05-13    | 2013-05-12  | Let Us C                      | C        | Yashavant Kanetkar  | 500.00 | 2012
+-04-22 | 2012-05-07  | 2012-05-25    |      100.00 |
+|             4 | RADHA       | 2012-04-22    | 2013-04-21  | Java How To Do Program        | JAVA     | Paul J. Deitel      | 600.00 | 2012
+-04-01 | 2012-04-16  | 2012-04-20    |       20.00 |
+|             5 | GURU        | 2012-03-30    | 2013-05-16  | Let Us C                      | C        | Yashavant Kanetkar  | 500.00 | 2012
+-03-30 | 2012-04-15  | 2012-04-20    |       20.00 |
+|             6 | GURU        | 2012-03-30    | 2013-05-16  | Let Us C                      | C        | Yashavant Kanetkar  | 500.00 | 2012
+-04-20 | 2012-05-05  | 2012-05-05    |        0.00 |
++---------------+-------------+---------------+-------------+-------------------------------+----------+---------------------+--------+-----
+-------+-------------+---------------+-------------+
+7 rows in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 13:
+Write a query to display the book code, title, publish date of the books which is been published in the month of December.
+
+SELECT b.BOOK_CODE, b.BOOK_TITLE, b.PUBLISH_DATE
+FROM LMS_BOOK_DETAILS b
+WHERE monthname(PUBLISH_DATE)='December';
+
+
++-----------+------------------------+--------------+
+| BOOK_CODE | BOOK_TITLE             | PUBLISH_DATE |
++-----------+------------------------+--------------+
+| BL000001  | Java How To Do Program | 1999-12-10   |
+| BL000005  | Java How To Do Program | 1999-12-10   |
+| BL000007  | Let Us C               | 2010-12-11   |
++-----------+------------------------+--------------+
+3 rows in set (0.01 sec)
+
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 14:
+Write a query to display the book code, book title and availability
+status of the ‘JAVA’ books whose edition is "5”. Show the availability status with 
+alias name “AVAILABILITYSTATUS”. Hint: Book availability status can be fetched from “BOOK_ISSUE_STATUS” column 
+of LMS_BOOK_ISSUE table.
+
+
+SELECT b.BOOK_CODE, b.BOOK_TITLE, 
+
+
+--------------------------------------------------------------------------------------------
+Complex Questions:
+____________________________________________________________________________________________
+Problem # 1:
+Write a query to display the book code, book title and supplier name of the supplier 
+who has supplied maximum number of books. 
+For example, if “ABC Store” supplied 3 books, 
+“LM Store” has supplied 2 books and “XYZ Store” has supplied 1 book. 
+So “ABC Store” has supplied maximum number of books, hence display the details as mentioned below.
+
+Example:
+-----------	-------------------------	-----------------
+BOOK_CODE 	BOOK_TITLE 			SUPPLIER_NAME
+-----------	-------------------------	-----------------
+BL000008 	Easy Reference for Java 	ABC STORE
+BL000001 	Easy Reference for C 		ABC STORE
+BL000003 	Easy Reference for VB 		ABC STORE
+-----------	-------------------------	-----------------
+
+
+SELECT b.BOOK_CODE, b.BOOK_TITLE, s.SUPPLIER_NAME
+FROM LMS_BOOK_DETAILS b, LMS_SUPPLIERS_DETAILS s
+WHERE b.SUPPLIER_ID=s.SUPPLIER_ID 
+	AND s.SUPPLIER_ID IN 	(SELECT SUPPLIER_ID 
+				FROM LMS_BOOK_DETAILS 
+				GROUP BY SUPPLIER_ID 
+				HAVING COUNT(*)=(SELECT MAX(C) 
+						FROM (SELECT COUNT(*) C 
+						FROM LMS_BOOK_DETAILS 
+						GROUP BY SUPPLIER_ID)max_supp
+				)
+);
+
+
++-----------+-------------------------------+-------------------+
+| BOOK_CODE | BOOK_TITLE                    | SUPPLIER_NAME     |
++-----------+-------------------------------+-------------------+
+| BL000001  | Java How To Do Program        | SINGAPORE SHOPPEE |
+| BL000003  | Java How To Do Program        | SINGAPORE SHOPPEE |
+| BL000004  | Java: The Complete Reference  | SINGAPORE SHOPPEE |
+| BL000005  | Java How To Do Program        | SINGAPORE SHOPPEE |
++-----------+-------------------------------+-------------------+
+4 rows in set (0.00 sec)
+
+
+
+--------------------------------------------------------------------------------------------
+Problem # 2:
+Write a query to display the member id, member name and number of remaining books he/she can take with “REMAININGBOOKS” as alias name. Hint: Assuming a member can take maximum 3 books. For example, Ramesh has already taken 2 books; he can take only one book now. Hence display the remaining books as 1 in below format.
+
+Example:
+------------	-------------	---------------
+MEMBER_ID 	MEMBER_NAME 	REMAININGBOOKS
+------------	-------------	---------------
+LM001 		RAMESH 		1
+LM002 		MOHAN 		3
+------------	-------------	---------------
+
+SELECT m.MEMBER_ID, m.MEMBER_NAME, 3-count(i.member_id) as 'REMAININGBOOKS'
+FROM LMS_BOOK_ISSUE i RIGHT OUTER JOIN LMS_MEMBERS m
+ON m.MEMBER_ID=i.MEMBER_ID
+GROUP BY m.MEMBER_ID;
+
++-----------+-------------+----------------+
+| MEMBER_ID | MEMBER_NAME | REMAININGBOOKS |
++-----------+-------------+----------------+
+| LM001     | AMIT        |              2 |
+| LM002     | ABDHUL      |              2 |
+| LM003     | GAYAN       |              1 |
+| LM004     | RADHA       |              2 |
+| LM005     | GURU        |              1 |
+| LM006     | MOHAN       |              3 |
++-----------+-------------+----------------+
+6 rows in set (0.00 sec)
+
+
+--------------------------------------------------------------------------------------------
+Problem # 3
+Write a query to display the supplier id and supplier name of the supplier who has supplied 
+minimum number of books. For example, if “ABC Store” supplied 3 books, “LM Store” has supplied 2 books and “XYZ Store” has supplied 1 book. So “XYZ Store” has
+
+
+
+
+SELECT s.SUPPLIER_ID, s.SUPPLIER_NAME
+FROM LMS_SUPPLIERS_DETAILS s, LMS_BOOK_DETAILS b
+WHERE s.SUPPLIER_ID=b.SUPPLIER_ID 
+	AND s.SUPPLIER_ID IN 	(SELECT SUPPLIER_ID 
+				FROM LMS_BOOK_DETAILS 
+				GROUP BY SUPPLIER_ID 
+				HAVING COUNT(*)=	(SELECT MIN(C) 
+							FROM 	(SELECT COUNT(*) C 
+								FROM LMS_BOOK_DETAILS 
+								GROUP BY SUPPLIER_ID
+								)a
+							)
+				);
+
+
+
+
++-------------+---------------+
+| SUPPLIER_ID | SUPPLIER_NAME |
++-------------+---------------+
+| S04         | KAVARI STORE  |
++-------------+---------------+
+1 row in set (0.00 sec)
+
+
+
+
